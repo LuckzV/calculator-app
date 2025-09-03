@@ -1,64 +1,35 @@
-# 🧮 Simple Calculator
+# Simple Calculator
 
-A beautiful, responsive calculator built with HTML, CSS, and JavaScript. Features a modern glassmorphism design and full keyboard support.
+A clean calculator built with HTML, CSS, and JavaScript. Modern design with keyboard support.
 
-## ✨ Features
+## Features
 
-- **Basic Operations**: Addition, subtraction, multiplication, division
-- **Modern UI**: Glassmorphism design with smooth animations
-- **Responsive**: Works on desktop and mobile devices
-- **Keyboard Support**: Use your keyboard for calculations
-- **Error Handling**: Prevents division by zero and invalid operations
-- **Decimal Support**: Handle decimal numbers with precision
+- Basic math operations
+- Responsive design
+- Keyboard shortcuts
+- Error handling
+- Decimal support
 
-## 🚀 How to Use
+## Usage
 
-1. **Open the Calculator**: Simply open `index.html` in your web browser
-2. **Click to Calculate**: Use the on-screen buttons to input numbers and operations
-3. **Keyboard Shortcuts**:
-   - Numbers: `0-9`
-   - Operations: `+`, `-`, `*`, `/`
-   - Equals: `Enter` or `=`
-   - Clear: `Escape` or `C`
-   - Delete: `Backspace`
+Open `index.html` in your browser. Use buttons or keyboard:
+- Numbers: 0-9
+- Operations: +, -, *, /
+- Equals: Enter or =
+- Clear: Escape or C
+- Delete: Backspace
 
-## 🛠️ Technologies Used
+## Tech Stack
 
-- **HTML5**: Structure and semantic markup
-- **CSS3**: Styling with flexbox, grid, and animations
-- **JavaScript**: Interactive functionality and calculations
+- HTML5
+- CSS3
+- JavaScript
 
-## 📱 Responsive Design
+## Installation
 
-The calculator adapts to different screen sizes:
-- Desktop: Full-size buttons and display
-- Mobile: Optimized layout for touch interaction
+1. Download the files
+2. Open `index.html`
+3. Start calculating
 
-## 🎨 Design Features
 
-- **Glassmorphism Effect**: Modern frosted glass appearance
-- **Gradient Background**: Beautiful color transitions
-- **Smooth Animations**: Hover effects and transitions
-- **Color-coded Buttons**: Different colors for different button types
 
-## 🔧 Installation
-
-1. Clone or download this repository
-2. Open `index.html` in any modern web browser
-3. Start calculating!
-
-## 📝 Future Enhancements
-
-- [ ] Memory functions (M+, M-, MR, MC)
-- [ ] Scientific calculator mode
-- [ ] History of calculations
-- [ ] Theme switcher
-- [ ] Sound effects
-
-## 🤝 Contributing
-
-Feel free to fork this project and submit pull requests for any improvements!
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).

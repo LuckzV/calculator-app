@@ -8,34 +8,68 @@
 </head>
 <body>
     <div class="calculator">
-        <div class="display">
-            <input type="text" id="result" readonly>
+        <!-- Theme Toggle -->
+        <div class="theme-toggle">
+            <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
         </div>
+        
+        <!-- Display -->
+        <div class="display">
+            <div class="memory-indicator" id="memoryIndicator"></div>
+            <input type="text" id="result" readonly>
+            <div class="history-display" id="historyDisplay"></div>
+        </div>
+        
+        <!-- Memory Functions Row -->
+        <div class="memory-buttons">
+            <button class="btn memory" onclick="memoryClear()">MC</button>
+            <button class="btn memory" onclick="memoryRecall()">MR</button>
+            <button class="btn memory" onclick="memoryAdd()">M+</button>
+            <button class="btn memory" onclick="memorySubtract()">M-</button>
+        </div>
+        
+        <!-- Main Calculator Buttons -->
         <div class="buttons">
-            <button class="btn clear" onclick="clearDisplay()">C</button>
+            <button class="btn clear" onclick="clearAll()">C</button>
+            <button class="btn clear-entry" onclick="clearEntry()">CE</button>
             <button class="btn operator" onclick="deleteLast()">⌫</button>
             <button class="btn operator" onclick="appendToDisplay('/')">/</button>
-            <button class="btn operator" onclick="appendToDisplay('*')">×</button>
             
             <button class="btn number" onclick="appendToDisplay('7')">7</button>
             <button class="btn number" onclick="appendToDisplay('8')">8</button>
             <button class="btn number" onclick="appendToDisplay('9')">9</button>
-            <button class="btn operator" onclick="appendToDisplay('-')">-</button>
+            <button class="btn operator" onclick="appendToDisplay('*')">×</button>
             
             <button class="btn number" onclick="appendToDisplay('4')">4</button>
             <button class="btn number" onclick="appendToDisplay('5')">5</button>
             <button class="btn number" onclick="appendToDisplay('6')">6</button>
-            <button class="btn operator" onclick="appendToDisplay('+')">+</button>
+            <button class="btn operator" onclick="appendToDisplay('-')">-</button>
             
             <button class="btn number" onclick="appendToDisplay('1')">1</button>
             <button class="btn number" onclick="appendToDisplay('2')">2</button>
             <button class="btn number" onclick="appendToDisplay('3')">3</button>
-            <button class="btn equals" onclick="calculateResult()" rowspan="2">=</button>
+            <button class="btn operator" onclick="appendToDisplay('+')">+</button>
             
             <button class="btn number zero" onclick="appendToDisplay('0')">0</button>
             <button class="btn number" onclick="appendToDisplay('.')">.</button>
+            <button class="btn function" onclick="calculatePercentage()">%</button>
+            <button class="btn function" onclick="calculateSquareRoot()">√</button>
+            
+            <button class="btn equals" onclick="calculateResult()">=</button>
+        </div>
+        
+        <!-- History Panel -->
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <h3>History</h3>
+                <button class="clear-history" onclick="clearHistory()">Clear</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
         </div>
     </div>
     <script src="script.js"></script>
 </body>
 </html>
+
+
+
