@@ -1,0 +1,23 @@
+[33mcommit a4095d44ca0545c3d6e8282bfc1effafe612280d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: LuckzV <Lonneman41@gmail.com>
+Date:   Wed Sep 3 19:22:45 2025 -0400
+
+    Add advanced calculator features: memory functions, history, themes, sound effects, and more
+
+ README.md  |  75 [32m+++[m[31m-------[m
+ index.html |  44 [32m+++++[m[31m-[m
+ script.js  | 497 [32m++++++++++++++++++++++++++++++++++++++++++++++++++++++++[m[31m-----[m
+ style.css  | 319 [32m+++++++++++++++++++++++++++++++++++[m[31m----[m
+ 4 files changed, 805 insertions(+), 130 deletions(-)
+
+[33mcommit b235a7f99bcbb5ac2c4ed3ceb11224a8cd2d6b50[m
+Author: LuckzV <Lonneman41@gmail.com>
+Date:   Tue Sep 2 14:15:30 2025 -0400
+
+    Initial commit: Calculator app with glassmorphism design
+
+ README.md  |  64 [32m++++++++++++++++++++++++++++++++++[m
+ index.html |  41 [32m++++++++++++++++++++++[m
+ script.js  | 115 [32m+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++[m
+ style.css  | 110 [32m++++++++++++++++++++++++++++++++++++++++++++++++++++++++++[m
+ 4 files changed, 330 insertions(+)

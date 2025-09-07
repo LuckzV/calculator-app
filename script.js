@@ -1,10 +1,6 @@
-/**
- * Advanced Calculator with Memory Functions, History, Themes, and Sound Effects
- * Features: Memory operations, calculation history, theme toggle, sound effects,
- * percentage calculations, square root, improved error handling, and more
- */
+// Calculator app - been working on this for a while
+// TODO: maybe add more math functions later
 
-// Global variables
 let currentInput = '';
 let operator = '';
 let previousInput = '';
@@ -14,58 +10,50 @@ let calculationHistory = [];
 let isDarkTheme = false;
 let currentColorIndex = 0;
 
-// Audio context for sound effects
+// sound stuff
 let audioContext;
 let soundEnabled = true;
 
-// Background color options
+// colors for the background - found these online
 const backgroundColors = [
-    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', // Original purple
-    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', // Pink
-    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', // Blue
-    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', // Green
-    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', // Orange
-    'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', // Pastel
-    'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)', // Soft pink
-    'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)', // Warm
-    'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)', // Lavender
-    'linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%)'  // Coral
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', // default purple
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', 
+    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', 
+    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', 
+    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', 
+    'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', 
+    'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)', 
+    'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)', 
+    'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)', 
+    'linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%)'  
 ];
 
-/**
- * Initialize the calculator
- */
 function init() {
-    // Load saved theme
+    // check if user had dark mode on
     const savedTheme = localStorage.getItem('calculatorTheme');
     if (savedTheme === 'dark') {
         toggleTheme();
     }
     
-    // Load saved color
+    // load their color choice
     const savedColor = localStorage.getItem('calculatorColor');
     if (savedColor) {
         currentColorIndex = parseInt(savedColor);
         applyBackgroundColor();
     }
     
-    // Load saved history
+    // get history from storage
     const savedHistory = localStorage.getItem('calculatorHistory');
     if (savedHistory) {
         calculationHistory = JSON.parse(savedHistory);
         updateHistoryDisplay();
     }
     
-    // Initialize audio context
     initAudio();
-    
     updateDisplay();
     updateMemoryIndicator();
 }
 
-/**
- * Initialize audio context for sound effects
- */
 function initAudio() {
     try {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -75,9 +63,6 @@ function initAudio() {
     }
 }
 
-/**
- * Play button click sound
- */
 function playSound(frequency = 800, duration = 100) {
     if (!soundEnabled || !audioContext) return;
     
@@ -101,9 +86,6 @@ function playSound(frequency = 800, duration = 100) {
     }
 }
 
-/**
- * Add visual feedback to button press
- */
 function addButtonFeedback(button) {
     if (button) {
         button.classList.add('playing');
@@ -111,25 +93,16 @@ function addButtonFeedback(button) {
     }
 }
 
-/**
- * Update the main display
- */
 function updateDisplay() {
     const display = document.getElementById('result');
     display.value = currentInput || '0';
 }
 
-/**
- * Show calculation expression in the calculation display
- */
 function showCalculation(expression) {
     const calcDisplay = document.getElementById('calculationDisplay');
     calcDisplay.textContent = expression;
 }
 
-/**
- * Clear calculation display
- */
 function clearCalculationDisplay() {
     const calcDisplay = document.getElementById('calculationDisplay');
     calcDisplay.textContent = '';
@@ -279,9 +252,6 @@ function setOperator(op) {
     currentInput = '';
 }
 
-/**
- * Calculate result with enhanced error handling
- */
 function calculateResult() {
     if (operator === '' || previousInput === '' || currentInput === '') {
         return;
@@ -314,7 +284,7 @@ function calculateResult() {
                 return;
         }
         
-        // Handle special cases
+        // check for weird numbers
         if (!isFinite(result)) {
             showError('Result is not a number');
             return;
@@ -325,13 +295,10 @@ function calculateResult() {
             return;
         }
         
-        // Round to avoid floating point precision issues
+        // fix floating point weirdness
         result = Math.round(result * 100000000) / 100000000;
         
-        // Show calculation in display
         showCalculation(expression + ' = ' + result);
-        
-        // Add to history
         addToHistory(expression, result);
         
         currentInput = result.toString();
