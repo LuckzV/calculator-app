@@ -12,10 +12,25 @@ let shouldResetDisplay = false;
 let memoryValue = 0;
 let calculationHistory = [];
 let isDarkTheme = false;
+let currentColorIndex = 0;
 
 // Audio context for sound effects
 let audioContext;
 let soundEnabled = true;
+
+// Background color options
+const backgroundColors = [
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', // Original purple
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', // Pink
+    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', // Blue
+    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', // Green
+    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', // Orange
+    'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', // Pastel
+    'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)', // Soft pink
+    'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)', // Warm
+    'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)', // Lavender
+    'linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%)'  // Coral
+];
 
 /**
  * Initialize the calculator
@@ -25,6 +40,13 @@ function init() {
     const savedTheme = localStorage.getItem('calculatorTheme');
     if (savedTheme === 'dark') {
         toggleTheme();
+    }
+    
+    // Load saved color
+    const savedColor = localStorage.getItem('calculatorColor');
+    if (savedColor) {
+        currentColorIndex = parseInt(savedColor);
+        applyBackgroundColor();
     }
     
     // Load saved history
@@ -95,6 +117,22 @@ function addButtonFeedback(button) {
 function updateDisplay() {
     const display = document.getElementById('result');
     display.value = currentInput || '0';
+}
+
+/**
+ * Show calculation expression in the calculation display
+ */
+function showCalculation(expression) {
+    const calcDisplay = document.getElementById('calculationDisplay');
+    calcDisplay.textContent = expression;
+}
+
+/**
+ * Clear calculation display
+ */
+function clearCalculationDisplay() {
+    const calcDisplay = document.getElementById('calculationDisplay');
+    calcDisplay.textContent = '';
 }
 
 /**
@@ -237,6 +275,7 @@ function setOperator(op) {
     
     operator = op;
     previousInput = currentInput;
+    showCalculation(previousInput + ' ' + operator);
     currentInput = '';
 }
 
@@ -288,6 +327,9 @@ function calculateResult() {
         
         // Round to avoid floating point precision issues
         result = Math.round(result * 100000000) / 100000000;
+        
+        // Show calculation in display
+        showCalculation(expression + ' = ' + result);
         
         // Add to history
         addToHistory(expression, result);
@@ -355,6 +397,7 @@ function clearAll() {
     operator = '';
     previousInput = '';
     shouldResetDisplay = false;
+    clearCalculationDisplay();
     updateDisplay();
 }
 
@@ -431,6 +474,24 @@ function toggleTheme() {
     }
     
     playSound(1000, 100);
+}
+
+/**
+ * Cycle through background colors
+ */
+function cycleBackgroundColor() {
+    currentColorIndex = (currentColorIndex + 1) % backgroundColors.length;
+    applyBackgroundColor();
+    localStorage.setItem('calculatorColor', currentColorIndex.toString());
+    playSound(1200, 80);
+}
+
+/**
+ * Apply the current background color
+ */
+function applyBackgroundColor() {
+    const body = document.body;
+    body.style.background = backgroundColors[currentColorIndex];
 }
 
 /**
@@ -530,3 +591,6 @@ if (document.readyState === 'loading') {
 } else {
     init();
 }
+
+
+

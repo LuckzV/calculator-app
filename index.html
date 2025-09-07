@@ -11,13 +11,14 @@
         <!-- Theme Toggle -->
         <div class="theme-toggle">
             <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+            <button class="color-btn" onclick="cycleBackgroundColor()" id="colorBtn">🌈</button>
         </div>
         
         <!-- Display -->
         <div class="display">
             <div class="memory-indicator" id="memoryIndicator"></div>
+            <div class="calculation-display" id="calculationDisplay"></div>
             <input type="text" id="result" readonly>
-            <div class="history-display" id="historyDisplay"></div>
         </div>
         
         <!-- Memory Functions Row -->
@@ -33,22 +34,22 @@
             <button class="btn clear" onclick="clearAll()">C</button>
             <button class="btn clear-entry" onclick="clearEntry()">CE</button>
             <button class="btn operator" onclick="deleteLast()">⌫</button>
-            <button class="btn operator" onclick="appendToDisplay('/')">/</button>
+            <button class="btn operator" onclick="setOperator('/')">/</button>
             
             <button class="btn number" onclick="appendToDisplay('7')">7</button>
             <button class="btn number" onclick="appendToDisplay('8')">8</button>
             <button class="btn number" onclick="appendToDisplay('9')">9</button>
-            <button class="btn operator" onclick="appendToDisplay('*')">×</button>
+            <button class="btn operator" onclick="setOperator('*')">×</button>
             
             <button class="btn number" onclick="appendToDisplay('4')">4</button>
             <button class="btn number" onclick="appendToDisplay('5')">5</button>
             <button class="btn number" onclick="appendToDisplay('6')">6</button>
-            <button class="btn operator" onclick="appendToDisplay('-')">-</button>
+            <button class="btn operator" onclick="setOperator('-')">-</button>
             
             <button class="btn number" onclick="appendToDisplay('1')">1</button>
             <button class="btn number" onclick="appendToDisplay('2')">2</button>
             <button class="btn number" onclick="appendToDisplay('3')">3</button>
-            <button class="btn operator" onclick="appendToDisplay('+')">+</button>
+            <button class="btn operator" onclick="setOperator('+')">+</button>
             
             <button class="btn number zero" onclick="appendToDisplay('0')">0</button>
             <button class="btn number" onclick="appendToDisplay('.')">.</button>
