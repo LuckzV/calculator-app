@@ -3,69 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Calculator</title>
+    <title>Math & Science Toolkit</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="calculator">
+    <div class="toolkit">
         <!-- Theme Toggle -->
         <div class="theme-toggle">
-            <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
             <button class="color-btn" onclick="cycleBackgroundColor()" id="colorBtn">🌈</button>
+            <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+        </div>
+
+        <!-- Tool Selection Tabs -->
+        <div class="tool-tabs">
+            <button class="tab-btn active" onclick="switchTool('basic-calc')" data-tool="basic-calc">Basic Calc</button>
+            <button class="tab-btn" onclick="switchTool('scientific')" data-tool="scientific">Scientific</button>
+            <button class="tab-btn" onclick="switchTool('unit-converter')" data-tool="unit-converter">Units</button>
+            <button class="tab-btn" onclick="switchTool('graphing')" data-tool="graphing">Graphing</button>
+            <button class="tab-btn" onclick="switchTool('percentage')" data-tool="percentage">Percentage</button>
+            <button class="tab-btn" onclick="switchTool('loan')" data-tool="loan">Loan</button>
+            <button class="tab-btn" onclick="switchTool('compound')" data-tool="compound">Compound</button>
         </div>
         
-        <!-- Display -->
-        <div class="display">
-            <div class="memory-indicator" id="memoryIndicator"></div>
-            <div class="calculation-display" id="calculationDisplay"></div>
-            <input type="text" id="result" readonly>
-        </div>
-        
-        <!-- Memory Functions Row -->
-        <div class="memory-buttons">
-            <button class="btn memory" onclick="memoryClear()">MC</button>
-            <button class="btn memory" onclick="memoryRecall()">MR</button>
-            <button class="btn memory" onclick="memoryAdd()">M+</button>
-            <button class="btn memory" onclick="memorySubtract()">M-</button>
-        </div>
-        
-        <!-- Main Calculator Buttons -->
-        <div class="buttons">
-            <button class="btn clear" onclick="clearAll()">C</button>
-            <button class="btn clear-entry" onclick="clearEntry()">CE</button>
-            <button class="btn operator" onclick="deleteLast()">⌫</button>
-            <button class="btn operator" onclick="setOperator('/')">/</button>
-            
-            <button class="btn number" onclick="appendToDisplay('7')">7</button>
-            <button class="btn number" onclick="appendToDisplay('8')">8</button>
-            <button class="btn number" onclick="appendToDisplay('9')">9</button>
-            <button class="btn operator" onclick="setOperator('*')">×</button>
-            
-            <button class="btn number" onclick="appendToDisplay('4')">4</button>
-            <button class="btn number" onclick="appendToDisplay('5')">5</button>
-            <button class="btn number" onclick="appendToDisplay('6')">6</button>
-            <button class="btn operator" onclick="setOperator('-')">-</button>
-            
-            <button class="btn number" onclick="appendToDisplay('1')">1</button>
-            <button class="btn number" onclick="appendToDisplay('2')">2</button>
-            <button class="btn number" onclick="appendToDisplay('3')">3</button>
-            <button class="btn operator" onclick="setOperator('+')">+</button>
-            
-            <button class="btn number zero" onclick="appendToDisplay('0')">0</button>
-            <button class="btn number" onclick="appendToDisplay('.')">.</button>
-            <button class="btn function" onclick="calculatePercentage()">%</button>
-            <button class="btn function" onclick="calculateSquareRoot()">√</button>
-            
-            <button class="btn equals" onclick="calculateResult()">=</button>
-        </div>
-        
-        <!-- History Panel -->
-        <div class="history-panel" id="historyPanel">
-            <div class="history-header">
-                <h3>History</h3>
-                <button class="clear-history" onclick="clearHistory()">Clear</button>
+        <!-- Basic Calculator Tool -->
+        <div class="tool-container active" id="basic-calc">
+            <div class="calculator">
+                <!-- Display -->
+                <div class="display">
+                    <div class="memory-indicator" id="memoryIndicator"></div>
+                    <div class="calculation-display" id="calculationDisplay"></div>
+                    <input type="text" id="result" readonly>
+                </div>
+                
+                <!-- Memory Functions Row -->
+                <div class="memory-buttons">
+                    <button class="btn memory" onclick="memoryClear()">MC</button>
+                    <button class="btn memory" onclick="memoryRecall()">MR</button>
+                    <button class="btn memory" onclick="memoryAdd()">M+</button>
+                    <button class="btn memory" onclick="memorySubtract()">M-</button>
+                </div>
+                
+                <!-- Main Calculator Buttons -->
+                <div class="buttons">
+                    <button class="btn clear" onclick="clearAll()">C</button>
+                    <button class="btn clear-entry" onclick="clearEntry()">CE</button>
+                    <button class="btn operator" onclick="deleteLast()">⌫</button>
+                    <button class="btn operator" onclick="setOperator('/')">/</button>
+                    
+                    <button class="btn number" onclick="appendToDisplay('7')">7</button>
+                    <button class="btn number" onclick="appendToDisplay('8')">8</button>
+                    <button class="btn number" onclick="appendToDisplay('9')">9</button>
+                    <button class="btn operator" onclick="setOperator('*')">×</button>
+                    
+                    <button class="btn number" onclick="appendToDisplay('4')">4</button>
+                    <button class="btn number" onclick="appendToDisplay('5')">5</button>
+                    <button class="btn number" onclick="appendToDisplay('6')">6</button>
+                    <button class="btn operator" onclick="setOperator('-')">-</button>
+                    
+                    <button class="btn number" onclick="appendToDisplay('1')">1</button>
+                    <button class="btn number" onclick="appendToDisplay('2')">2</button>
+                    <button class="btn number" onclick="appendToDisplay('3')">3</button>
+                    <button class="btn operator" onclick="setOperator('+')">+</button>
+                    
+                    <button class="btn number zero" onclick="appendToDisplay('0')">0</button>
+                    <button class="btn number" onclick="appendToDisplay('.')">.</button>
+                    <button class="btn function" onclick="calculatePercentage()">%</button>
+                    <button class="btn function" onclick="calculateSquareRoot()">√</button>
+                    
+                    <button class="btn equals" onclick="calculateResult()">=</button>
+                </div>
+                
+                <!-- History Panel -->
+                <div class="history-panel" id="historyPanel">
+                    <div class="history-header">
+                        <h3>History</h3>
+                        <button class="clear-history" onclick="clearHistory()">Clear</button>
+                    </div>
+                    <div class="history-list" id="historyList"></div>
+                </div>
             </div>
-            <div class="history-list" id="historyList"></div>
+        </div>
+
+        <!-- Scientific Calculator Tool -->
+        <div class="tool-container" id="scientific">
+            <div class="calculator">
+                <div class="display">
+                    <div class="calculation-display" id="sciCalculationDisplay"></div>
+                    <input type="text" id="sciResult" readonly>
+                </div>
+                <div class="scientific-buttons">
+                    <button class="btn function" onclick="sciFunction('sin')">sin</button>
+                    <button class="btn function" onclick="sciFunction('cos')">cos</button>
+                    <button class="btn function" onclick="sciFunction('tan')">tan</button>
+                    <button class="btn function" onclick="sciFunction('log')">log</button>
+                    <button class="btn function" onclick="sciFunction('ln')">ln</button>
+                    <button class="btn function" onclick="sciFunction('sqrt')">√</button>
+                    <button class="btn function" onclick="sciFunction('pow')">x²</button>
+                    <button class="btn function" onclick="sciFunction('pow3')">x³</button>
+                    <button class="btn function" onclick="sciFunction('exp')">eˣ</button>
+                    <button class="btn function" onclick="sciFunction('pi')">π</button>
+                    <button class="btn function" onclick="sciFunction('e')">e</button>
+                    <button class="btn function" onclick="sciFunction('factorial')">n!</button>
+                </div>
+                <div class="buttons">
+                    <button class="btn clear" onclick="sciClear()">C</button>
+                    <button class="btn clear-entry" onclick="sciClearEntry()">CE</button>
+                    <button class="btn operator" onclick="sciDeleteLast()">⌫</button>
+                    <button class="btn operator" onclick="sciSetOperator('/')">/</button>
+                    
+                    <button class="btn number" onclick="sciAppendToDisplay('7')">7</button>
+                    <button class="btn number" onclick="sciAppendToDisplay('8')">8</button>
+                    <button class="btn number" onclick="sciAppendToDisplay('9')">9</button>
+                    <button class="btn operator" onclick="sciSetOperator('*')">×</button>
+                    
+                    <button class="btn number" onclick="sciAppendToDisplay('4')">4</button>
+                    <button class="btn number" onclick="sciAppendToDisplay('5')">5</button>
+                    <button class="btn number" onclick="sciAppendToDisplay('6')">6</button>
+                    <button class="btn operator" onclick="sciSetOperator('-')">-</button>
+                    
+                    <button class="btn number" onclick="sciAppendToDisplay('1')">1</button>
+                    <button class="btn number" onclick="sciAppendToDisplay('2')">2</button>
+                    <button class="btn number" onclick="sciAppendToDisplay('3')">3</button>
+                    <button class="btn operator" onclick="sciSetOperator('+')">+</button>
+                    
+                    <button class="btn number zero" onclick="sciAppendToDisplay('0')">0</button>
+                    <button class="btn number" onclick="sciAppendToDisplay('.')">.</button>
+                    <button class="btn function" onclick="sciFunction('pow')">xʸ</button>
+                    <button class="btn equals" onclick="sciCalculate()">=</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unit Converter Tool -->
+        <div class="tool-container" id="unit-converter">
+            <div class="converter">
+                <h3>Unit Converter</h3>
+                <div class="converter-section">
+                    <label>Category:</label>
+                    <select id="converterCategory" onchange="updateConverterUnits()">
+                        <option value="length">Length</option>
+                        <option value="weight">Weight</option>
+                        <option value="temperature">Temperature</option>
+                        <option value="currency">Currency</option>
+                        <option value="area">Area</option>
+                        <option value="volume">Volume</option>
+                    </select>
+                </div>
+                <div class="converter-inputs">
+                    <div class="input-group">
+                        <input type="number" id="fromValue" placeholder="Enter value" oninput="convertUnits()">
+                        <select id="fromUnit"></select>
+                    </div>
+                    <div class="converter-arrow">→</div>
+                    <div class="input-group">
+                        <input type="number" id="toValue" readonly>
+                        <select id="toUnit" onchange="convertUnits()"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphing Calculator Tool -->
+        <div class="tool-container" id="graphing">
+            <div class="graphing-calc">
+                <h3>Graphing Calculator</h3>
+                <div class="graph-inputs">
+                    <input type="text" id="functionInput" placeholder="Enter function (e.g., x^2, sin(x), log(x))" onkeypress="if(event.key==='Enter') plotFunction()">
+                    <button class="btn" onclick="plotFunction()">Plot</button>
+                    <button class="btn" onclick="clearGraph()">Clear</button>
+                </div>
+                <canvas id="graphCanvas" width="400" height="300"></canvas>
+                <div class="graph-controls">
+                    <button class="btn" onclick="zoomIn()">Zoom In</button>
+                    <button class="btn" onclick="zoomOut()">Zoom Out</button>
+                    <button class="btn" onclick="resetView()">Reset View</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Percentage Calculator Tool -->
+        <div class="tool-container" id="percentage">
+            <div class="percentage-calc">
+                <h3>Percentage Calculator</h3>
+                <div class="percentage-section">
+                    <h4>What is X% of Y?</h4>
+                    <input type="number" id="percentValue" placeholder="Percentage">
+                    <span>% of</span>
+                    <input type="number" id="percentOf" placeholder="Number">
+                    <button class="btn" onclick="calculatePercentageOf()">Calculate</button>
+                    <div class="result" id="percentageResult"></div>
+                </div>
+                <div class="percentage-section">
+                    <h4>X is what % of Y?</h4>
+                    <input type="number" id="isValue" placeholder="Number">
+                    <span>is what % of</span>
+                    <input type="number" id="ofValue" placeholder="Number">
+                    <button class="btn" onclick="calculateWhatPercent()">Calculate</button>
+                    <div class="result" id="whatPercentResult"></div>
+                </div>
+                <div class="percentage-section">
+                    <h4>Tip Calculator</h4>
+                    <input type="number" id="billAmount" placeholder="Bill amount">
+                    <input type="number" id="tipPercent" placeholder="Tip %" value="15">
+                    <input type="number" id="people" placeholder="Number of people" value="1">
+                    <button class="btn" onclick="calculateTip()">Calculate</button>
+                    <div class="result" id="tipResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loan Calculator Tool -->
+        <div class="tool-container" id="loan">
+            <div class="loan-calc">
+                <h3>Loan Calculator</h3>
+                <div class="loan-inputs">
+                    <div class="input-group">
+                        <label>Loan Amount ($):</label>
+                        <input type="number" id="loanAmount" placeholder="100000">
+                    </div>
+                    <div class="input-group">
+                        <label>Interest Rate (%):</label>
+                        <input type="number" id="interestRate" placeholder="5.5" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Loan Term (years):</label>
+                        <input type="number" id="loanTerm" placeholder="30">
+                    </div>
+                    <button class="btn" onclick="calculateLoan()">Calculate</button>
+                </div>
+                <div class="loan-results" id="loanResults"></div>
+            </div>
+        </div>
+
+        <!-- Compound Interest Calculator Tool -->
+        <div class="tool-container" id="compound">
+            <div class="compound-calc">
+                <h3>Compound Interest Calculator</h3>
+                <div class="compound-inputs">
+                    <div class="input-group">
+                        <label>Principal Amount ($):</label>
+                        <input type="number" id="principal" placeholder="1000">
+                    </div>
+                    <div class="input-group">
+                        <label>Annual Interest Rate (%):</label>
+                        <input type="number" id="annualRate" placeholder="5" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Time Period (years):</label>
+                        <input type="number" id="timePeriod" placeholder="10">
+                    </div>
+                    <div class="input-group">
+                        <label>Compounding Frequency:</label>
+                        <select id="compoundingFreq">
+                            <option value="1">Annually</option>
+                            <option value="2">Semi-annually</option>
+                            <option value="4">Quarterly</option>
+                            <option value="12">Monthly</option>
+                            <option value="365">Daily</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="calculateCompound()">Calculate</button>
+                </div>
+                <div class="compound-results" id="compoundResults"></div>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

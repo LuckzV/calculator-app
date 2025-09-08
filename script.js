@@ -1,5 +1,5 @@
-// Calculator app - been working on this for a while
-// TODO: maybe add more math functions later
+// Math & Science Toolkit - Comprehensive calculator suite
+// Features: Basic calc, Scientific calc, Unit converter, Graphing, Percentage, Loan, Compound interest
 
 let currentInput = '';
 let operator = '';
@@ -9,6 +9,18 @@ let memoryValue = 0;
 let calculationHistory = [];
 let isDarkTheme = false;
 let currentColorIndex = 0;
+
+// Scientific calculator variables
+let sciCurrentInput = '';
+let sciOperator = '';
+let sciPreviousInput = '';
+let sciShouldResetDisplay = false;
+
+// Graphing calculator variables
+let graphScale = 1;
+let graphOffsetX = 0;
+let graphOffsetY = 0;
+let graphFunctions = [];
 
 // sound stuff
 let audioContext;
@@ -551,6 +563,663 @@ window.addEventListener('resize', function() {
         calculator.style.maxWidth = '350px';
     }
 });
+
+/**
+ * Tool switching functionality
+ */
+function switchTool(toolName) {
+    // Hide all tool containers
+    const containers = document.querySelectorAll('.tool-container');
+    containers.forEach(container => container.classList.remove('active'));
+    
+    // Remove active class from all tabs
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    
+    // Show selected tool and activate its tab
+    const selectedTool = document.getElementById(toolName);
+    const selectedTab = document.querySelector(`[data-tool="${toolName}"]`);
+    
+    if (selectedTool && selectedTab) {
+        selectedTool.classList.add('active');
+        selectedTab.classList.add('active');
+        playSound(1000, 100);
+    }
+    
+    // Initialize specific tool if needed
+    if (toolName === 'unit-converter') {
+        updateConverterUnits();
+    } else if (toolName === 'graphing') {
+        initGraphing();
+    }
+}
+
+/**
+ * Scientific Calculator Functions
+ */
+function sciAppendToDisplay(value) {
+    playSound(800, 50);
+    
+    if (sciShouldResetDisplay) {
+        sciCurrentInput = '';
+        sciShouldResetDisplay = false;
+    }
+    
+    if (value === '.' && sciCurrentInput.includes('.')) {
+        return;
+    }
+    
+    if (sciCurrentInput === '0' && value !== '.') {
+        sciCurrentInput = value;
+    } else {
+        sciCurrentInput += value;
+    }
+    
+    if (sciCurrentInput.length > 15) {
+        sciCurrentInput = sciCurrentInput.slice(0, 15);
+        showError('Input too long');
+        return;
+    }
+    
+    updateSciDisplay();
+}
+
+function updateSciDisplay() {
+    const display = document.getElementById('sciResult');
+    display.value = sciCurrentInput || '0';
+}
+
+function sciSetOperator(op) {
+    playSound(1000, 60);
+    
+    if (sciCurrentInput === '') return;
+    
+    if (sciOperator !== '' && sciPreviousInput !== '') {
+        sciCalculate();
+    }
+    
+    sciOperator = op;
+    sciPreviousInput = sciCurrentInput;
+    showSciCalculation(sciPreviousInput + ' ' + sciOperator);
+    sciCurrentInput = '';
+}
+
+function sciCalculate() {
+    if (sciOperator === '' || sciPreviousInput === '' || sciCurrentInput === '') {
+        return;
+    }
+    
+    const prev = parseFloat(sciPreviousInput);
+    const current = parseFloat(sciCurrentInput);
+    let result;
+    let expression = `${sciPreviousInput} ${sciOperator} ${sciCurrentInput}`;
+    
+    try {
+        switch (sciOperator) {
+            case '+':
+                result = prev + current;
+                break;
+            case '-':
+                result = prev - current;
+                break;
+            case '*':
+                result = prev * current;
+                break;
+            case '/':
+                if (current === 0) {
+                    showError('Cannot divide by zero');
+                    return;
+                }
+                result = prev / current;
+                break;
+            default:
+                return;
+        }
+        
+        if (!isFinite(result)) {
+            showError('Result is not a number');
+            return;
+        }
+        
+        if (Math.abs(result) > 1e15) {
+            showError('Result too large');
+            return;
+        }
+        
+        result = Math.round(result * 100000000) / 100000000;
+        
+        showSciCalculation(expression + ' = ' + result);
+        sciCurrentInput = result.toString();
+        sciOperator = '';
+        sciPreviousInput = '';
+        sciShouldResetDisplay = true;
+        updateSciDisplay();
+        
+        playSound(1200, 100);
+        
+    } catch (error) {
+        showError('Calculation error');
+        console.error('Calculation error:', error);
+    }
+}
+
+function sciFunction(func) {
+    playSound(900, 70);
+    
+    if (sciCurrentInput === '') return;
+    
+    const value = parseFloat(sciCurrentInput);
+    let result;
+    let expression;
+    
+    try {
+        switch (func) {
+            case 'sin':
+                result = Math.sin(value * Math.PI / 180);
+                expression = `sin(${value}°)`;
+                break;
+            case 'cos':
+                result = Math.cos(value * Math.PI / 180);
+                expression = `cos(${value}°)`;
+                break;
+            case 'tan':
+                result = Math.tan(value * Math.PI / 180);
+                expression = `tan(${value}°)`;
+                break;
+            case 'log':
+                if (value <= 0) {
+                    showError('Log of non-positive number');
+                    return;
+                }
+                result = Math.log10(value);
+                expression = `log(${value})`;
+                break;
+            case 'ln':
+                if (value <= 0) {
+                    showError('Log of non-positive number');
+                    return;
+                }
+                result = Math.log(value);
+                expression = `ln(${value})`;
+                break;
+            case 'sqrt':
+                if (value < 0) {
+                    showError('Square root of negative number');
+                    return;
+                }
+                result = Math.sqrt(value);
+                expression = `√${value}`;
+                break;
+            case 'pow':
+                result = Math.pow(value, 2);
+                expression = `${value}²`;
+                break;
+            case 'pow3':
+                result = Math.pow(value, 3);
+                expression = `${value}³`;
+                break;
+            case 'exp':
+                result = Math.exp(value);
+                expression = `e^${value}`;
+                break;
+            case 'pi':
+                result = Math.PI;
+                expression = 'π';
+                break;
+            case 'e':
+                result = Math.E;
+                expression = 'e';
+                break;
+            case 'factorial':
+                if (value < 0 || value !== Math.floor(value)) {
+                    showError('Factorial of non-integer or negative number');
+                    return;
+                }
+                if (value > 170) {
+                    showError('Number too large for factorial');
+                    return;
+                }
+                result = factorial(value);
+                expression = `${value}!`;
+                break;
+            default:
+                return;
+        }
+        
+        if (!isFinite(result)) {
+            showError('Result is not a number');
+            return;
+        }
+        
+        result = Math.round(result * 100000000) / 100000000;
+        
+        showSciCalculation(expression + ' = ' + result);
+        sciCurrentInput = result.toString();
+        sciShouldResetDisplay = true;
+        updateSciDisplay();
+        
+    } catch (error) {
+        showError('Function error');
+        console.error('Function error:', error);
+    }
+}
+
+function factorial(n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}
+
+function showSciCalculation(expression) {
+    const calcDisplay = document.getElementById('sciCalculationDisplay');
+    calcDisplay.textContent = expression;
+}
+
+function sciClear() {
+    playSound(400, 100);
+    sciCurrentInput = '';
+    sciOperator = '';
+    sciPreviousInput = '';
+    sciShouldResetDisplay = false;
+    showSciCalculation('');
+    updateSciDisplay();
+}
+
+function sciClearEntry() {
+    playSound(500, 80);
+    sciCurrentInput = '';
+    updateSciDisplay();
+}
+
+function sciDeleteLast() {
+    playSound(600, 60);
+    if (sciCurrentInput.length > 0) {
+        sciCurrentInput = sciCurrentInput.slice(0, -1);
+        updateSciDisplay();
+    }
+}
+
+/**
+ * Unit Converter Functions
+ */
+const unitConversions = {
+    length: {
+        'mm': 0.001,
+        'cm': 0.01,
+        'm': 1,
+        'km': 1000,
+        'in': 0.0254,
+        'ft': 0.3048,
+        'yd': 0.9144,
+        'mi': 1609.34
+    },
+    weight: {
+        'mg': 0.001,
+        'g': 1,
+        'kg': 1000,
+        'oz': 28.3495,
+        'lb': 453.592,
+        'ton': 1000000
+    },
+    temperature: {
+        'c': 'celsius',
+        'f': 'fahrenheit',
+        'k': 'kelvin'
+    },
+    area: {
+        'mm²': 0.000001,
+        'cm²': 0.0001,
+        'm²': 1,
+        'km²': 1000000,
+        'in²': 0.00064516,
+        'ft²': 0.092903,
+        'yd²': 0.836127,
+        'ac': 4046.86
+    },
+    volume: {
+        'ml': 0.001,
+        'l': 1,
+        'cm³': 0.001,
+        'm³': 1000,
+        'in³': 0.0163871,
+        'ft³': 28.3168,
+        'gal': 3.78541
+    }
+};
+
+function updateConverterUnits() {
+    const category = document.getElementById('converterCategory').value;
+    const fromUnit = document.getElementById('fromUnit');
+    const toUnit = document.getElementById('toUnit');
+    
+    // Clear existing options
+    fromUnit.innerHTML = '';
+    toUnit.innerHTML = '';
+    
+    // Add units for selected category
+    const units = Object.keys(unitConversions[category]);
+    units.forEach(unit => {
+        const option1 = document.createElement('option');
+        const option2 = document.createElement('option');
+        option1.value = unit;
+        option1.textContent = unit;
+        option2.value = unit;
+        option2.textContent = unit;
+        fromUnit.appendChild(option1);
+        toUnit.appendChild(option2);
+    });
+    
+    // Set default selections
+    if (units.length > 1) {
+        toUnit.selectedIndex = 1;
+    }
+}
+
+function convertUnits() {
+    const category = document.getElementById('converterCategory').value;
+    const fromValue = parseFloat(document.getElementById('fromValue').value);
+    const fromUnit = document.getElementById('fromUnit').value;
+    const toUnit = document.getElementById('toUnit').value;
+    
+    if (isNaN(fromValue) || !fromUnit || !toUnit) {
+        document.getElementById('toValue').value = '';
+        return;
+    }
+    
+    let result;
+    
+    if (category === 'temperature') {
+        result = convertTemperature(fromValue, fromUnit, toUnit);
+    } else {
+        const fromFactor = unitConversions[category][fromUnit];
+        const toFactor = unitConversions[category][toUnit];
+        result = (fromValue * fromFactor) / toFactor;
+    }
+    
+    document.getElementById('toValue').value = result.toFixed(6);
+}
+
+function convertTemperature(value, from, to) {
+    let celsius;
+    
+    // Convert to Celsius first
+    switch (from) {
+        case 'c':
+            celsius = value;
+            break;
+        case 'f':
+            celsius = (value - 32) * 5 / 9;
+            break;
+        case 'k':
+            celsius = value - 273.15;
+            break;
+    }
+    
+    // Convert from Celsius to target
+    switch (to) {
+        case 'c':
+            return celsius;
+        case 'f':
+            return celsius * 9 / 5 + 32;
+        case 'k':
+            return celsius + 273.15;
+    }
+}
+
+/**
+ * Graphing Calculator Functions
+ */
+function initGraphing() {
+    const canvas = document.getElementById('graphCanvas');
+    if (canvas) {
+        drawGraph();
+    }
+}
+
+function plotFunction() {
+    const input = document.getElementById('functionInput').value.trim();
+    if (!input) return;
+    
+    try {
+        const func = parseFunction(input);
+        graphFunctions.push({ expression: input, func: func, color: getRandomColor() });
+        drawGraph();
+        playSound(1000, 100);
+    } catch (error) {
+        showError('Invalid function');
+    }
+}
+
+function parseFunction(expression) {
+    // Simple function parser - converts x^2 to Math.pow(x,2), etc.
+    expression = expression.replace(/x\^(\d+)/g, 'Math.pow(x,$1)');
+    expression = expression.replace(/sin\(/g, 'Math.sin(');
+    expression = expression.replace(/cos\(/g, 'Math.cos(');
+    expression = expression.replace(/tan\(/g, 'Math.tan(');
+    expression = expression.replace(/log\(/g, 'Math.log10(');
+    expression = expression.replace(/ln\(/g, 'Math.log(');
+    expression = expression.replace(/sqrt\(/g, 'Math.sqrt(');
+    expression = expression.replace(/exp\(/g, 'Math.exp(');
+    
+    return new Function('x', `return ${expression}`);
+}
+
+function getRandomColor() {
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
+function drawGraph() {
+    const canvas = document.getElementById('graphCanvas');
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // Clear canvas
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, width, height);
+    
+    // Draw axes
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(width/2, 0);
+    ctx.lineTo(width/2, height);
+    ctx.moveTo(0, height/2);
+    ctx.lineTo(width, height/2);
+    ctx.stroke();
+    
+    // Draw grid
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < width; i += 20) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, height);
+        ctx.stroke();
+    }
+    for (let i = 0; i < height; i += 20) {
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(width, i);
+        ctx.stroke();
+    }
+    
+    // Draw functions
+    graphFunctions.forEach(({ func, color }) => {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        let firstPoint = true;
+        for (let x = -width/2; x < width/2; x += 0.5) {
+            try {
+                const y = func(x / 20) * 20; // Scale
+                const screenX = x + width/2;
+                const screenY = height/2 - y;
+                
+                if (screenY >= 0 && screenY <= height) {
+                    if (firstPoint) {
+                        ctx.moveTo(screenX, screenY);
+                        firstPoint = false;
+                    } else {
+                        ctx.lineTo(screenX, screenY);
+                    }
+                }
+            } catch (e) {
+                // Skip invalid points
+            }
+        }
+        ctx.stroke();
+    });
+}
+
+function clearGraph() {
+    graphFunctions = [];
+    drawGraph();
+    playSound(400, 100);
+}
+
+function zoomIn() {
+    graphScale *= 1.2;
+    drawGraph();
+    playSound(800, 50);
+}
+
+function zoomOut() {
+    graphScale /= 1.2;
+    drawGraph();
+    playSound(600, 50);
+}
+
+function resetView() {
+    graphScale = 1;
+    graphOffsetX = 0;
+    graphOffsetY = 0;
+    drawGraph();
+    playSound(1000, 100);
+}
+
+/**
+ * Percentage Calculator Functions
+ */
+function calculatePercentageOf() {
+    const percent = parseFloat(document.getElementById('percentValue').value);
+    const of = parseFloat(document.getElementById('percentOf').value);
+    
+    if (isNaN(percent) || isNaN(of)) {
+        document.getElementById('percentageResult').textContent = 'Please enter valid numbers';
+        return;
+    }
+    
+    const result = (percent / 100) * of;
+    document.getElementById('percentageResult').textContent = `${percent}% of ${of} = ${result}`;
+    playSound(1000, 100);
+}
+
+function calculateWhatPercent() {
+    const is = parseFloat(document.getElementById('isValue').value);
+    const of = parseFloat(document.getElementById('ofValue').value);
+    
+    if (isNaN(is) || isNaN(of) || of === 0) {
+        document.getElementById('whatPercentResult').textContent = 'Please enter valid numbers';
+        return;
+    }
+    
+    const result = (is / of) * 100;
+    document.getElementById('whatPercentResult').textContent = `${is} is ${result.toFixed(2)}% of ${of}`;
+    playSound(1000, 100);
+}
+
+function calculateTip() {
+    const bill = parseFloat(document.getElementById('billAmount').value);
+    const tipPercent = parseFloat(document.getElementById('tipPercent').value);
+    const people = parseFloat(document.getElementById('people').value);
+    
+    if (isNaN(bill) || isNaN(tipPercent) || isNaN(people) || people <= 0) {
+        document.getElementById('tipResult').textContent = 'Please enter valid numbers';
+        return;
+    }
+    
+    const tipAmount = (bill * tipPercent) / 100;
+    const total = bill + tipAmount;
+    const perPerson = total / people;
+    
+    document.getElementById('tipResult').innerHTML = `
+        <div>Tip Amount: $${tipAmount.toFixed(2)}</div>
+        <div>Total Bill: $${total.toFixed(2)}</div>
+        <div>Per Person: $${perPerson.toFixed(2)}</div>
+    `;
+    playSound(1000, 100);
+}
+
+/**
+ * Loan Calculator Functions
+ */
+function calculateLoan() {
+    const principal = parseFloat(document.getElementById('loanAmount').value);
+    const annualRate = parseFloat(document.getElementById('interestRate').value);
+    const years = parseFloat(document.getElementById('loanTerm').value);
+    
+    if (isNaN(principal) || isNaN(annualRate) || isNaN(years) || principal <= 0 || annualRate < 0 || years <= 0) {
+        document.getElementById('loanResults').innerHTML = '<p>Please enter valid numbers</p>';
+        return;
+    }
+    
+    const monthlyRate = annualRate / 100 / 12;
+    const numPayments = years * 12;
+    
+    let monthlyPayment;
+    if (monthlyRate === 0) {
+        monthlyPayment = principal / numPayments;
+    } else {
+        monthlyPayment = principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
+                        (Math.pow(1 + monthlyRate, numPayments) - 1);
+    }
+    
+    const totalPayment = monthlyPayment * numPayments;
+    const totalInterest = totalPayment - principal;
+    
+    document.getElementById('loanResults').innerHTML = `
+        <h4>Loan Calculation Results</h4>
+        <p><strong>Monthly Payment:</strong> $${monthlyPayment.toFixed(2)}</p>
+        <p><strong>Total Payment:</strong> $${totalPayment.toFixed(2)}</p>
+        <p><strong>Total Interest:</strong> $${totalInterest.toFixed(2)}</p>
+        <p><strong>Interest Rate:</strong> ${annualRate}% APR</p>
+    `;
+    playSound(1000, 100);
+}
+
+/**
+ * Compound Interest Calculator Functions
+ */
+function calculateCompound() {
+    const principal = parseFloat(document.getElementById('principal').value);
+    const annualRate = parseFloat(document.getElementById('annualRate').value);
+    const time = parseFloat(document.getElementById('timePeriod').value);
+    const frequency = parseInt(document.getElementById('compoundingFreq').value);
+    
+    if (isNaN(principal) || isNaN(annualRate) || isNaN(time) || principal <= 0 || annualRate < 0 || time <= 0) {
+        document.getElementById('compoundResults').innerHTML = '<p>Please enter valid numbers</p>';
+        return;
+    }
+    
+    const rate = annualRate / 100;
+    const amount = principal * Math.pow(1 + rate / frequency, frequency * time);
+    const interest = amount - principal;
+    
+    const frequencyText = ['Annually', 'Semi-annually', 'Quarterly', 'Monthly', 'Daily'][frequency - 1] || 'Custom';
+    
+    document.getElementById('compoundResults').innerHTML = `
+        <h4>Compound Interest Results</h4>
+        <p><strong>Principal Amount:</strong> $${principal.toFixed(2)}</p>
+        <p><strong>Interest Rate:</strong> ${annualRate}% per year</p>
+        <p><strong>Compounding:</strong> ${frequencyText}</p>
+        <p><strong>Time Period:</strong> ${time} years</p>
+        <p><strong>Final Amount:</strong> $${amount.toFixed(2)}</p>
+        <p><strong>Interest Earned:</strong> $${interest.toFixed(2)}</p>
+    `;
+    playSound(1000, 100);
+}
 
 // Initialize when page loads
 if (document.readyState === 'loading') {

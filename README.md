@@ -1,35 +1,33 @@
-# Simple Calculator
+# Calculator Toolkit
 
-A clean calculator built with HTML, CSS, and JavaScript. Modern design with keyboard support.
+A multi-tool calculator with basic math, scientific functions, unit conversion, graphing, percentage calculations, loan calculator, and compound interest calculator.
+
+## Tools
+
+- Basic Calculator - Standard arithmetic with memory functions
+- Scientific Calculator - Trig functions, logs, powers, constants
+- Unit Converter - Length, weight, temperature, area, volume
+- Graphing Calculator - Plot mathematical functions
+- Percentage Calculator - Tips, discounts, percentage calculations
+- Loan Calculator - Monthly payments and interest calculations
+- Compound Interest Calculator - Investment growth calculations
 
 ## Features
 
-- Basic math operations
+- Tabbed interface for easy tool switching
+- Dark and light themes
+- Multiple color backgrounds
+- Sound effects and keyboard support
+- Calculation history
 - Responsive design
-- Keyboard shortcuts
-- Error handling
-- Decimal support
 
 ## Usage
 
-Open `index.html` in your browser. Use buttons or keyboard:
-- Numbers: 0-9
-- Operations: +, -, *, /
-- Equals: Enter or =
-- Clear: Escape or C
-- Delete: Backspace
-
-## Tech Stack
-
-- HTML5
-- CSS3
-- JavaScript
+Open `index.html` in your browser. Click tabs to switch tools. Use keyboard shortcuts for quick access.
 
 ## Installation
 
-1. Download the files
-2. Open `index.html`
-3. Start calculating
+Download files and open `index.html` in any modern browser.
 
 
 
