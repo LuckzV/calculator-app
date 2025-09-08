@@ -496,38 +496,39 @@ function showError(message) {
  */
 document.addEventListener('keydown', function(event) {
     const key = event.key;
-    const button = event.target;
+    const activeTool = document.querySelector('.tool-container.active');
     
-    // Prevent default for calculator keys
-    if ('0123456789+-*/.=EnterEscapeBackspace'.includes(key)) {
-        event.preventDefault();
+    // Only handle keyboard events for basic calculator
+    if (activeTool && activeTool.id === 'basic-calc') {
+        // Prevent default for calculator keys
+        if ('0123456789+-*/.=EnterEscapeBackspace'.includes(key)) {
+            event.preventDefault();
+        }
+        
+        if (key >= '0' && key <= '9' || key === '.') {
+            appendToDisplay(key);
+        } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+            setOperator(key);
+        } else if (key === 'Enter' || key === '=') {
+            calculateResult();
+        } else if (key === 'Escape' || key.toLowerCase() === 'c') {
+            clearAll();
+        } else if (key === 'Backspace') {
+            deleteLast();
+        } else if (key.toLowerCase() === 'h') {
+            toggleHistory();
+        } else if (key.toLowerCase() === 't') {
+            toggleTheme();
+        } else if (key === '%') {
+            calculatePercentage();
+        } else if (key === 's' || key === 'S') {
+            calculateSquareRoot();
+        }
     }
     
-    if (key >= '0' && key <= '9' || key === '.') {
-        appendToDisplay(key);
-        addButtonFeedback(button);
-    } else if (key === '+' || key === '-' || key === '*' || key === '/') {
-        setOperator(key);
-        addButtonFeedback(button);
-    } else if (key === 'Enter' || key === '=') {
-        calculateResult();
-        addButtonFeedback(button);
-    } else if (key === 'Escape' || key.toLowerCase() === 'c') {
-        clearAll();
-        addButtonFeedback(button);
-    } else if (key === 'Backspace') {
-        deleteLast();
-        addButtonFeedback(button);
-    } else if (key.toLowerCase() === 'h') {
-        toggleHistory();
-    } else if (key.toLowerCase() === 't') {
+    // Global shortcuts
+    if (key.toLowerCase() === 't') {
         toggleTheme();
-    } else if (key === '%') {
-        calculatePercentage();
-        addButtonFeedback(button);
-    } else if (key === 's' || key === 'S') {
-        calculateSquareRoot();
-        addButtonFeedback(button);
     }
 });
 
@@ -626,7 +627,9 @@ function sciAppendToDisplay(value) {
 
 function updateSciDisplay() {
     const display = document.getElementById('sciResult');
-    display.value = sciCurrentInput || '0';
+    if (display) {
+        display.value = sciCurrentInput || '0';
+    }
 }
 
 function sciSetOperator(op) {
@@ -811,7 +814,9 @@ function factorial(n) {
 
 function showSciCalculation(expression) {
     const calcDisplay = document.getElementById('sciCalculationDisplay');
-    calcDisplay.textContent = expression;
+    if (calcDisplay) {
+        calcDisplay.textContent = expression;
+    }
 }
 
 function sciClear() {
@@ -977,7 +982,10 @@ function initGraphing() {
 
 function plotFunction() {
     const input = document.getElementById('functionInput').value.trim();
-    if (!input) return;
+    if (!input) {
+        showError('Please enter a function');
+        return;
+    }
     
     try {
         const func = parseFunction(input);
@@ -985,13 +993,16 @@ function plotFunction() {
         drawGraph();
         playSound(1000, 100);
     } catch (error) {
-        showError('Invalid function');
+        showError('Invalid function: ' + error.message);
+        console.error('Function parsing error:', error);
     }
 }
 
 function parseFunction(expression) {
     // Simple function parser - converts x^2 to Math.pow(x,2), etc.
     expression = expression.replace(/x\^(\d+)/g, 'Math.pow(x,$1)');
+    expression = expression.replace(/x\^2/g, 'Math.pow(x,2)');
+    expression = expression.replace(/x\^3/g, 'Math.pow(x,3)');
     expression = expression.replace(/sin\(/g, 'Math.sin(');
     expression = expression.replace(/cos\(/g, 'Math.cos(');
     expression = expression.replace(/tan\(/g, 'Math.tan(');
@@ -1000,7 +1011,16 @@ function parseFunction(expression) {
     expression = expression.replace(/sqrt\(/g, 'Math.sqrt(');
     expression = expression.replace(/exp\(/g, 'Math.exp(');
     
-    return new Function('x', `return ${expression}`);
+    // Handle simple cases like "x" or "x^2"
+    if (expression === 'x') {
+        return function(x) { return x; };
+    }
+    
+    try {
+        return new Function('x', `return ${expression}`);
+    } catch (e) {
+        throw new Error('Invalid function expression');
+    }
 }
 
 function getRandomColor() {
@@ -1010,6 +1030,8 @@ function getRandomColor() {
 
 function drawGraph() {
     const canvas = document.getElementById('graphCanvas');
+    if (!canvas) return;
+    
     const ctx = canvas.getContext('2d');
     const width = canvas.width;
     const height = canvas.height;
@@ -1051,13 +1073,14 @@ function drawGraph() {
         ctx.beginPath();
         
         let firstPoint = true;
-        for (let x = -width/2; x < width/2; x += 0.5) {
+        for (let x = -width/2; x < width/2; x += 1) {
             try {
-                const y = func(x / 20) * 20; // Scale
+                const scaledX = x / 20; // Scale down x
+                const y = func(scaledX) * 20; // Scale up y
                 const screenX = x + width/2;
                 const screenY = height/2 - y;
                 
-                if (screenY >= 0 && screenY <= height) {
+                if (screenY >= -height && screenY <= height * 2) {
                     if (firstPoint) {
                         ctx.moveTo(screenX, screenY);
                         firstPoint = false;
