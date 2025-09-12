@@ -1,0 +1,196 @@
+
+# 
+# calculator Lucky 2025.09.12 calculator-20250912-873E58D8 1.0 not bad right!?
+# 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Typer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .ready { background: #d4edda; color: #155724; }
+        .listening { background: #fff3cd; color: #856404; }
+        .error { background: #f8d7da; color: #721c24; }
+        .success { background: #d1ecf1; color: #0c5460; }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        
+        #textArea {
+            width: 100%;
+            height: 150px;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .instructions {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Voice Typer</h1>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Click "Start Listening"</li>
+                <li>Speak as long as you want - it will keep listening!</li>
+                <li>You'll see your words appear in real-time</li>
+                <li>Click "Stop Listening" when done</li>
+                <li>Click "Copy Text" to copy everything</li>
+                <li>Paste it anywhere (Ctrl+V)</li>
+            </ol>
+        </div>
+        
+        <div id="status" class="status ready">Ready to listen</div>
+        
+        <div style="text-align: center;">
+            <button id="listenBtn" onclick="toggleListening()">Start Listening</button>
+            <button id="copyBtn" onclick="copyText()" disabled>Copy Text</button>
+            <button onclick="clearText()">Clear</button>
+        </div>
+        
+        <textarea id="textArea" placeholder="Recognized text will appear here..."></textarea>
+    </div>
+
+    <script>
+        let isListening = false;
+        let recognition;
+        
+        // Initialize speech recognition
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+        } else if ('SpeechRecognition' in window) {
+            recognition = new SpeechRecognition();
+        } else {
+            document.getElementById('status').innerHTML = 'Speech recognition not supported in this browser';
+            document.getElementById('status').className = 'status error';
+        }
+        
+        if (recognition) {
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            
+            recognition.onstart = function() {
+                isListening = true;
+                document.getElementById('listenBtn').textContent = 'Stop Listening';
+                document.getElementById('status').innerHTML = 'Listening... Speak now!';
+                document.getElementById('status').className = 'status listening';
+            };
+            
+            recognition.onresult = function(event) {
+                let finalTranscript = '';
+                let interimTranscript = '';
+                
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + ' ';
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+                
+                const textArea = document.getElementById('textArea');
+                const currentText = textArea.value.replace(/\[.*?\]$/, ''); // Remove previous interim text
+                
+                if (finalTranscript) {
+                    textArea.value = currentText + finalTranscript;
+                    document.getElementById('status').innerHTML = 'Text added! Keep speaking or click "Stop Listening".';
+                    document.getElementById('status').className = 'status success';
+                    document.getElementById('copyBtn').disabled = false;
+                } else if (interimTranscript) {
+                    textArea.value = currentText + '[' + interimTranscript + ']';
+                    document.getElementById('status').innerHTML = 'Listening... ' + interimTranscript;
+                    document.getElementById('status').className = 'status listening';
+                }
+            };
+            
+            recognition.onerror = function(event) {
+                document.getElementById('status').innerHTML = 'Error: ' + event.error;
+                document.getElementById('status').className = 'status error';
+                isListening = false;
+                document.getElementById('listenBtn').textContent = 'Start Listening';
+            };
+            
+            recognition.onend = function() {
+                isListening = false;
+                document.getElementById('listenBtn').textContent = 'Start Listening';
+                if (document.getElementById('status').className === 'status listening') {
+                    document.getElementById('status').innerHTML = 'Stopped listening';
+                    document.getElementById('status').className = 'status ready';
+                }
+            };
+        }
+        
+        function toggleListening() {
+            if (!recognition) return;
+            
+            if (!isListening) {
+                recognition.start();
+            } else {
+                recognition.stop();
+            }
+        }
+        
+        function copyText() {
+            const textArea = document.getElementById('textArea');
+            textArea.select();
+            document.execCommand('copy');
+            document.getElementById('status').innerHTML = 'Text copied to clipboard!';
+            document.getElementById('status').className = 'status success';
+        }
+        
+        function clearText() {
+            document.getElementById('textArea').value = '';
+            document.getElementById('status').innerHTML = 'Text cleared';
+            document.getElementById('status').className = 'status ready';
+            document.getElementById('copyBtn').disabled = true;
+        }
+    </script>
+</body>
+</html>
